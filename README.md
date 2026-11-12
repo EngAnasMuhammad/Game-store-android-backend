@@ -76,12 +76,12 @@ src/main/kotlin/com/anasdev/
 | `POST` | `/auth/login`    | Public | Authenticate credentials & return a signed JWT + role |
 
 ### Customer Cart & Orders (`Authorization: Bearer <token>`)
-| Method | Endpoint | Access | Description |
-| :--- | :--- | :--- | :--- |
-| `GET` | `/cart` | Authenticated | View all keys currently reserved in the user's cart |
-| `POST` | `/cart/lock` | Authenticated | Reserve 1 available key for a game for 15 minutes |
-| `POST` | `/cart/checkout` | Authenticated | Atomically purchase all reserved cart items & reveal keys |
-| `GET` | `/orders` | Authenticated | Retrieve historical order receipts and purchased key codes |
+| Method | Endpoint         | Access        | Description                                                |
+|:-------|:-----------------|:--------------|:-----------------------------------------------------------|
+| `GET`  | `/cart`          | Authenticated | View all keys currently reserved in the user's cart        |
+| `POST` | `/cart/lock`     | Authenticated | Reserve 1 available key for a game for 15 minutes          |
+| `POST` | `/cart/checkout` | Authenticated | Atomically purchase all reserved cart items & reveal keys  |
+| `GET`  | `/orders`        | Authenticated | Retrieve historical order receipts and purchased key codes |
 
 ### Admin Management (`Authorization: Bearer <token>` with `role == "ADMIN"`)
 | Method | Endpoint                 | Access                       | Description                                      |
