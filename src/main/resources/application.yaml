@@ -1,0 +1,19 @@
+ktor:
+  deployment:
+    port: 8080
+  application:
+    modules:
+      - com.anasdev.MainKt.module
+
+jwt:
+  domain: "http://0.0.0.0:8080"
+  audience: "gamestore-users"
+  realm: "gamestore-app"
+  secret: ${?JWT_SECRET}
+
+storage:
+  driverClassName: "org.postgresql.Driver"
+  jdbcURL: ${?DB_URL}
+  user: ${?DB_USER}
+  password: ${?DB_PASSWORD}
+  maximumPoolSize: 10
