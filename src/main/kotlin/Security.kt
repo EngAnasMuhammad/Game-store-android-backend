@@ -22,6 +22,7 @@ object JwtTokenManager{
         issuer = environment.config.property("jwt.domain").getString()
         audience = environment.config.property("jwt.audience").getString()
         realm = environment.config.property("jwt.realm").getString()
+
     }
 
     fun createToken(userId: UUID, role: String): String{

@@ -71,4 +71,13 @@ class GameRepository{
             this[GameKeysTable.keyCode] = code
         }.count()
     }
+
+    suspend fun getAllUsedImagePaths(): Set<String> = dbQuery {
+        GamesTable
+            .select(GamesTable.imagePath)
+            .mapNotNull { row ->
+                row[GamesTable.imagePath]?.takeIf { it.isNotBlank() }
+            }
+            .toSet()
+    }
 }

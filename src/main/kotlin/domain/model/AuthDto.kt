@@ -14,3 +14,8 @@ data class AuthResponse(
     val userId: String,
     val role: String
 )
+
+@Serializable
+data class GoogleAuthRequest(
+    val idToken: String,
+)

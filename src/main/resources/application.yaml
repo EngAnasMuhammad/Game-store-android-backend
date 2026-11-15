@@ -11,6 +11,9 @@ jwt:
   realm: "gamestore-app"
   secret: ${?JWT_SECRET}
 
+google:
+  webClientId: ${?GOOGLE_WEB_CLIENT_ID}
+
 storage:
   driverClassName: "org.postgresql.Driver"
   jdbcURL: ${?DB_URL}

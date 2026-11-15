@@ -8,7 +8,7 @@ import org.jetbrains.exposed.sql.javatime.CurrentTimestamp
 
 object UsersTable : UUIDTable("users") {
     val email = varchar("email", 100).uniqueIndex()
-    val passwordHash = varchar("password_hash", 64)
+    val passwordHash = varchar("password_hash", 64).nullable()
     val role = varchar("role", 10)
 }
 

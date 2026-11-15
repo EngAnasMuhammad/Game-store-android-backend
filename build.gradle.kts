@@ -48,6 +48,10 @@ dependencies {
 // 3. HikariCP (Industry-standard high-speed connection pool)
     implementation("com.zaxxer:HikariCP:6.2.1")
 
+    implementation("com.google.api-client:google-api-client:2.9.2")
+
+    implementation("net.coobird:thumbnailator:0.4.20")
+
     testImplementation(kotlin("test"))
     testImplementation(ktorLibs.server.testHost)
 }

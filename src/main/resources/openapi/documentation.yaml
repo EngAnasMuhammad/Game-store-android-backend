@@ -1,0 +1,428 @@
+openapi: "3.1.0"
+info:
+  title: "gamestore_backend API"
+  description: "gamestore_backend API"
+  version: "1.0.0"
+servers:
+  - url: "https://gamestore_backend"
+paths:
+  /admin/games:
+    post:
+      description: ""
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateGameRequest"
+        required: true
+      responses:
+        "403":
+          description: "Forbidden"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/Map_String"
+        "400":
+          description: "Bad Request"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/Map_String"
+        "201":
+          description: "Created"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/Map_String"
+  /admin/games/{id}/keys:
+    post:
+      description: ""
+      parameters:
+        - name: "id"
+          in: "path"
+          required: true
+          schema:
+            type: "string"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AddKeyRequest"
+        required: true
+      responses:
+        "403":
+          description: "Forbidden"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/Map_String"
+        "400":
+          description: "Bad Request"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/Map_String"
+        "409":
+          description: "Conflict"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/Map_String"
+        "201":
+          description: "Created"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/Map_String"
+        "404":
+          description: "Not Found"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/Map_String"
+  /admin/upload-image:
+    post:
+      description: ""
+      responses:
+        "403":
+          description: "Forbidden"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/Map_String"
+        "201":
+          description: "Created"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/Map_String"
+        "400":
+          description: "Bad Request"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/Map_String"
+  /auth/google:
+    post:
+      description: ""
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GoogleAuthRequest"
+        required: true
+      responses:
+        "401":
+          description: "Unauthorized"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/Map_String"
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+  /auth/login:
+    post:
+      description: ""
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AuthRequest"
+        required: true
+      responses:
+        "401":
+          description: "Unauthorized"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/Map_String"
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+  /auth/register:
+    post:
+      description: ""
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AuthRequest"
+        required: true
+      responses:
+        "400":
+          description: "Bad Request"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/Map_String"
+        "409":
+          description: "Conflict"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: "An account with this email already exists"
+        "201":
+          description: "Created"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+              examples:
+                Example#1:
+                  description: ""
+                  value:
+                    token: "null"
+                    userId: "null"
+                    role: "CUSTOMER"
+  /cart:
+    get:
+      description: ""
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                type: "array"
+                items:
+                  $ref: "#/components/schemas/LockedCartItemResponse"
+  /cart/checkout:
+    post:
+      description: ""
+      responses:
+        "400":
+          description: "Bad Request"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/Map_String"
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/OrderReceiptResponse"
+  /cart/lock:
+    post:
+      description: ""
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LockKeyRequest"
+        required: true
+      responses:
+        "400":
+          description: "Bad Request"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/Map_String"
+        "409":
+          description: "Conflict"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/Map_String"
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/LockedCartItemResponse"
+  /games:
+    get:
+      description: ""
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                type: "array"
+                items:
+                  $ref: "#/components/schemas/GameResponse"
+  /orders:
+    get:
+      description: ""
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                type: "array"
+                items:
+                  $ref: "#/components/schemas/OrderReceiptResponse"
+components:
+  schemas:
+    Map:
+      type: "object"
+      properties: { }
+    Map_String:
+      type: "string"
+    CreateGameRequest:
+      type: "object"
+      properties:
+        title:
+          type: "string"
+        description:
+          type: "string"
+          nullable: true
+        imagePath:
+          type: "string"
+        releaseDate:
+          type: "string"
+        genre:
+          type: "string"
+        currentPrice:
+          type: "number"
+          format: "double"
+      required:
+        - "title"
+        - "imagePath"
+        - "releaseDate"
+        - "genre"
+        - "currentPrice"
+    AddKeyRequest:
+      type: "object"
+      properties:
+        keys:
+          type: "array"
+          items:
+            type: "string"
+      required:
+        - "keys"
+    GoogleAuthRequest:
+      type: "object"
+      properties:
+        idToken:
+          type: "string"
+      required:
+        - "idToken"
+    AuthResponse:
+      type: "object"
+      properties:
+        token:
+          type: "string"
+        userId:
+          type: "string"
+        role:
+          type: "string"
+      required:
+        - "token"
+        - "userId"
+        - "role"
+    AuthRequest:
+      type: "object"
+      properties:
+        email:
+          type: "string"
+        password:
+          type: "string"
+      required:
+        - "email"
+        - "password"
+    LockedCartItemResponse:
+      type: "object"
+      properties:
+        keyId:
+          type: "string"
+        gameId:
+          type: "string"
+        gameTitle:
+          type: "string"
+        price:
+          type: "number"
+          format: "double"
+        lockedUntil:
+          type: "string"
+      required:
+        - "keyId"
+        - "gameId"
+        - "gameTitle"
+        - "price"
+        - "lockedUntil"
+    OrderItemReceiptDto:
+      type: "object"
+      properties:
+        gameId:
+          type: "string"
+        gameTitle:
+          type: "string"
+        priceAtPurchase:
+          type: "number"
+          format: "double"
+        keyCode:
+          type: "string"
+      required:
+        - "gameId"
+        - "gameTitle"
+        - "priceAtPurchase"
+        - "keyCode"
+    OrderReceiptResponse:
+      type: "object"
+      properties:
+        orderId:
+          type: "string"
+        totalAmount:
+          type: "number"
+          format: "double"
+        createdAt:
+          type: "string"
+        items:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/OrderItemReceiptDto"
+      required:
+        - "orderId"
+        - "totalAmount"
+        - "createdAt"
+        - "items"
+    LockKeyRequest:
+      type: "object"
+      properties:
+        gameId:
+          type: "string"
+      required:
+        - "gameId"
+    GameResponse:
+      type: "object"
+      properties:
+        id:
+          type: "string"
+        title:
+          type: "string"
+        description:
+          type: "string"
+          nullable: true
+        imagePath:
+          type: "string"
+        genre:
+          type: "string"
+        releaseDate:
+          type: "string"
+        currentPrice:
+          type: "number"
+          format: "double"
+        availableStock:
+          type: "integer"
+          format: "int32"
+      required:
+        - "id"
+        - "title"
+        - "imagePath"
+        - "genre"
+        - "releaseDate"
+        - "currentPrice"
+        - "availableStock"
