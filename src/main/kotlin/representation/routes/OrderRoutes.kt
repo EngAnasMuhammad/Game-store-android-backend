@@ -9,6 +9,7 @@ import io.ktor.server.auth.principal
 import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
+import io.ktor.server.routing.delete
 import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import io.ktor.server.routing.route
@@ -44,6 +45,25 @@ fun Route.orderRoutes(orderRepository: OrderRepository) {
 
                 call.respond(HttpStatusCode.OK,lockedItem)
 
+            }
+
+            delete("/{id}") {
+                val principal = call.principal<JWTPrincipal>()!!
+                val userId = UUID.fromString(principal.payload.getClaim("userId").asString())
+                val keyId = runCatching {UUID.fromString(call.parameters["id"])}.getOrNull()
+
+                if (keyId == null) {
+                    call.respond(HttpStatusCode.BadRequest, mapOf("error" to "Invalid key id format"))
+                    return@delete
+                }
+
+                val removed = orderRepository.removeCartItem(userId, keyId)
+
+                if (removed) {
+                    call.respond(HttpStatusCode.OK, mapOf("message" to "Item removed from cart"))
+                    return@delete
+                }
+                else call.respond(HttpStatusCode.NotFound,mapOf("error" to "Cart item not found"))
             }
 
             post("/checkout") {

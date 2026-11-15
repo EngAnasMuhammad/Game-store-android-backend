@@ -5,17 +5,11 @@ import com.anasdev.data.local.GameKeysTable
 import com.anasdev.data.local.GamesTable
 import com.anasdev.domain.model.CreateGameRequest
 import com.anasdev.domain.model.GameResponse
-import org.jetbrains.exposed.sql.JoinType
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.and
-import org.jetbrains.exposed.sql.batchInsert
-import org.jetbrains.exposed.sql.count
-import org.jetbrains.exposed.sql.insertAndGetId
-import org.jetbrains.exposed.sql.or
-import org.jetbrains.exposed.sql.selectAll
 import java.time.Instant
 import java.time.LocalDate
-import java.util.UUID
+import java.util.*
 
 class GameRepository{
 
@@ -76,7 +70,7 @@ class GameRepository{
         GamesTable
             .select(GamesTable.imagePath)
             .mapNotNull { row ->
-                row[GamesTable.imagePath]?.takeIf { it.isNotBlank() }
+                row[GamesTable.imagePath].takeIf { it.isNotBlank() }
             }
             .toSet()
     }

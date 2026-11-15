@@ -2,7 +2,6 @@ package com.anasdev.data.repository
 
 import com.anasdev.data.local.DatabaseFactory.dbQuery
 import com.anasdev.data.local.GameKeysTable
-import com.anasdev.data.local.GameKeysTable.gameId
 import com.anasdev.data.local.GamesTable
 import com.anasdev.data.local.OrderItemsTable
 import com.anasdev.data.local.OrdersTable
@@ -168,4 +167,18 @@ class OrderRepository{
         }
 
     }
+
+    suspend fun removeCartItem(userId: UUID, keyId: UUID): Boolean = dbQuery {
+        val updatedRows = GameKeysTable.update({
+            (GameKeysTable.id eq keyId) and
+                    (GameKeysTable.lockedByUserId eq userId) and
+                    (GameKeysTable.lockedUntil.isNotNull()) and
+                    (GameKeysTable.isSold eq false)
+        }) {
+            it[lockedByUserId] = null
+            it[lockedUntil] = null
+        }
+        updatedRows > 0
+    }
+
 }

@@ -2,13 +2,9 @@ package com.anasdev.data.repository
 
 import com.anasdev.data.local.DatabaseFactory.dbQuery
 import com.anasdev.data.local.UsersTable
-import io.ktor.server.response.UseHttp2Push
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.insertAndGetId
-import org.jetbrains.exposed.sql.not
 import org.jetbrains.exposed.sql.selectAll
-import java.util.UUID
+import java.util.*
 
 data class UserRecord(
     val id: UUID,
