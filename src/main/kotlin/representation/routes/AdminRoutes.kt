@@ -3,6 +3,7 @@ package com.anasdev.representation.routes
 import com.anasdev.data.repository.GameRepository
 import com.anasdev.domain.model.AddKeyRequest
 import com.anasdev.domain.model.CreateGameRequest
+import java.net.http.HttpClient
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.content.PartData
 import io.ktor.http.content.forEachPart
@@ -19,14 +20,22 @@ import io.ktor.utils.io.toByteArray
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import net.coobird.thumbnailator.Thumbnails
-import net.coobird.thumbnailator.makers.ThumbnailMaker
 import java.awt.image.BufferedImage
-import java.io.ByteArrayInputStream
-import java.io.File
+import java.io.ByteArrayOutputStream
+import java.net.URI
+import java.net.http.HttpRequest
+import java.net.http.HttpResponse
 import java.util.UUID
 import javax.imageio.ImageIO
 
-fun Route.adminRoutes(gameRepository: GameRepository) {
+fun Route.adminRoutes(
+    gameRepository: GameRepository,
+    supabaseUrl: String,
+    supabaseServiceKey: String
+) {
+    val httpClient = HttpClient.newHttpClient()
+    val bucketName = "game-covers"
+
     authenticate("auth-jwt") {
         route("/admin") {
 
@@ -127,10 +136,7 @@ fun Route.adminRoutes(gameRepository: GameRepository) {
                                     return@withContext
                                 }
 
-                                val uploadDir = File("uploads/images").apply { mkdirs() }
-                                val uniqueFilename = "${UUID.randomUUID()}.jpg"
-                                val outputFile = File(uploadDir, uniqueFilename)
-
+                                val outputStream = ByteArrayOutputStream()
                                 val thumbnailBuilder = if (bufferedImage.width > 800 || bufferedImage.height > 800) {
                                     Thumbnails.of(bufferedImage).size(800, 800)
                                 } else {
@@ -141,9 +147,28 @@ fun Route.adminRoutes(gameRepository: GameRepository) {
                                     .imageType(BufferedImage.TYPE_INT_RGB)
                                     .outputFormat("jpg")
                                     .outputQuality(0.80)
-                                    .toFile(outputFile)
+                                    .toOutputStream(outputStream)
 
-                                savedImagePath = "/uploads/images/$uniqueFilename"
+                                val uniqueFilename = "${UUID.randomUUID()}.jpg"
+                                val uploadUrl = "$supabaseUrl/storage/v1/object/$bucketName/$uniqueFilename"
+
+                                val uploadRequest = HttpRequest.newBuilder()
+                                    .uri(URI.create(uploadUrl))
+                                    .header("Authorization", "Bearer $supabaseServiceKey")
+                                    .header("apikey", supabaseServiceKey)
+                                    .header("Content-Type", "image/jpeg")
+                                    .header("x-upsert", "true")
+                                    .POST(HttpRequest.BodyPublishers.ofByteArray(outputStream.toByteArray()))
+                                    .build()
+
+                                val response = httpClient.send(uploadRequest, HttpResponse.BodyHandlers.ofString())
+
+                                if (response.statusCode() in 200..299) {
+                                    savedImagePath = "$supabaseUrl/storage/v1/object/public/$bucketName/$uniqueFilename"
+                                } else {
+                                    errorStatus = HttpStatusCode.InternalServerError
+                                    errorMessage = "Storage upload failed (${response.statusCode()})"
+                                }
                             }
                         }
                     } finally {

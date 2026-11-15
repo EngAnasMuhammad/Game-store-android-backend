@@ -1,6 +1,8 @@
 ktor:
   deployment:
     port: 8080
+    host: "0.0.0.0"
+
   application:
     modules:
       - com.anasdev.MainKt.module
@@ -13,6 +15,10 @@ jwt:
 
 google:
   webClientId: ${?GOOGLE_WEB_CLIENT_ID}
+
+supabase:
+  url: "${?SUPABASE_URL}"
+  serviceKey: "${?SUPABASE_SERVICE_KEY}"
 
 storage:
   driverClassName: "org.postgresql.Driver"
