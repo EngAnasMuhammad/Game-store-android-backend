@@ -49,6 +49,26 @@ fun Route.adminRoutes(
                 }
 
                 val request = call.receive<CreateGameRequest>()
+
+                when {
+                    request.title.isBlank() || request.title.length > 100 -> {
+                        call.respond(HttpStatusCode.BadRequest, mapOf("error" to "Title must be between 1 and 100 characters"))
+                        return@post
+                    }
+                    request.genre.isBlank() || request.genre.length > 30 -> {
+                        call.respond(HttpStatusCode.BadRequest, mapOf("error" to "Genre must be between 1 and 30 characters"))
+                        return@post
+                    }
+                    request.currentPrice < 0.0 -> {
+                        call.respond(HttpStatusCode.BadRequest, mapOf("error" to "Price cannot be negative"))
+                        return@post
+                    }
+                    runCatching { java.time.LocalDate.parse(request.releaseDate) }.isFailure -> {
+                        call.respond(HttpStatusCode.BadRequest, mapOf("error" to "Release date must be in YYYY-MM-DD format"))
+                        return@post
+                    }
+                }
+
                 val newGameId = runCatching {
                     gameRepository.createGame(request)
                 }.getOrElse {

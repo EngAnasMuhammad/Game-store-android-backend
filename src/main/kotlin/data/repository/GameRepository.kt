@@ -29,6 +29,7 @@ class GameRepository{
             .select(GamesTable.columns + stockCountExpr)
             .where(GamesTable.isActive eq true)
             .groupBy(GamesTable.id)
+            .orderBy(GamesTable.title.lowerCase(), SortOrder.ASC)
             .map{ row ->
                 GameResponse(
                     id = row[GamesTable.id].value.toString(),
